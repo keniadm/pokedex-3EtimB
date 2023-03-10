@@ -1,3 +1,6 @@
+using Pokedex.Models;
+using System.Text.Json;
+
 namespace Pokedex.Services;
 
 public class PokeService : IPokeService
@@ -12,10 +15,7 @@ public class PokeService : IPokeService
 
     public Pokemon GetPokemon(int Numero)
     {
-        PopularSessao();
-
-        var pokemons = JsonSerializer.Deserialize<List<Pokemon>>(
-            _session.HttpContext.Session.GetString("Pokemons"));
+        var pokemons = GetPokemons();
         return pokemons.Where(p => p.Numero == Numero).FirstOrDefault();
     }
 
@@ -42,7 +42,7 @@ public class PokeService : IPokeService
         if (string.IsNullOrEmpty(
             _session.HttpContext.Session.GetString("Pokemons")))
         {
-            dados = LerArquivo(@"Data\pokemons.json");
+            var dados = LerArquivo(@"Data\pokemons.json");
             _session.HttpContext.Session.SetString("Pokemons", dados);
             dados = LerArquivo(@"Data\tipos.json");
             _session.HttpContext.Session.SetString("Tipos", dados);
